@@ -8,5 +8,6 @@ namespace LunchManagement.Repository
 {
     public interface IMenuRepository : IGenericRepository<Menu>
     {
+       
     }
 }

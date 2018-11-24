@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using LunchManagement.Models;
 using LunchManagement.Services;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,17 +22,15 @@ namespace LunchManagement.Controllers
         {
             this.menuService = menuService;
         }
-
-        // GET: api/Meal
+        
         [HttpGet]
         public async Task<IActionResult> GetAsync()
         {
-            var result =  await menuService.GetAll();
+            var result =  await menuService.GetMenuByCurrentWeek();
 
             return this.Ok(result);
         }
-
-        // GET: api/Meal/5
+        
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
@@ -61,6 +62,16 @@ namespace LunchManagement.Controllers
             await menuService.Delete(menu);
 
             return this.Ok();
+        }
+
+        [HttpPost, DisableRequestSizeLimit]
+        [Route("uploading")]
+        public IActionResult UploadImage()
+        {
+            var file = Request.Form.Files[0];
+            var result = menuService.UploadImage(file).Result;
+
+            return Ok(result);
         }
     }
 }

@@ -1,11 +1,13 @@
 ﻿using LunchManagement.Helper;
 using LunchManagement.Models;
 using LunchManagement.Repository;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace LunchManagement.Services
@@ -13,49 +15,63 @@ namespace LunchManagement.Services
     public class MenuService : GenericService <Menu>, IMenuService
     {
         private readonly IMenuRepository menuRepository;
-        public MenuService(IMenuRepository menuRepository) : base(menuRepository)
+        private IHostingEnvironment _hostingEnvironment;
+        public MenuService(IMenuRepository menuRepository, IHostingEnvironment hosting) : base(menuRepository)
         {
             this.menuRepository = menuRepository;
+            this._hostingEnvironment = hosting;
         }
 
         public async Task<string> UploadImage(IFormFile file)
         {
-            if (CheckIfImageFile(file))
+            if (this.CheckIfImageFile(file))
             {
-                return await WriteFile(file);
+                var result = ProcessUploadImage(file);
+
+                var relativeUri = new Uri(result);
+
+                if (string.IsNullOrEmpty(result))
+                {
+                    return "upload failed";
+                }
+                var menu = new Menu
+                {
+                    MenuImage = relativeUri.AbsolutePath
+                };
+                await this.Add(menu);
+                return "upload successfully";
             }
 
             return "Invalid image file";
         }
 
-        private async Task<string> WriteFile(IFormFile file)
+        private string ProcessUploadImage(IFormFile file)
         {
-            string fileName;
             try
             {
-                var extension = "." + file.FileName.Split('.')[file.FileName.Split('.').Length - 1];
-                fileName = DateTime.Now + extension; //Create a new Name 
-                                                                  //for the file due to security reasons.
-                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images", fileName);
-
-                using (var bits = new FileStream(path, FileMode.Create))
+                string folderName = "images";
+                string webRootPath = Directory.GetCurrentDirectory();
+                string newPath = Path.Combine(webRootPath, folderName);
+                if (!Directory.Exists(newPath))
                 {
-                    await file.CopyToAsync(bits);
+                    Directory.CreateDirectory(newPath);
                 }
-
-                var menu = new Menu
+                if (file.Length > 0)
                 {
-                    MenuImage = path
-                };
-
-                await this.Add(menu);
+                    string fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+                    string fullPath = Path.Combine(newPath, fileName);
+                    using (var stream = new FileStream(fullPath, FileMode.Create))
+                    {
+                        file.CopyTo(stream);
+                    }
+                    return fullPath;
+                }
+                return newPath;
             }
-            catch (Exception e)
+            catch (System.Exception ex)
             {
-                return e.Message;
+                return null;
             }
-
-            return fileName;
         }
 
         private bool CheckIfImageFile(IFormFile file)
@@ -68,6 +84,24 @@ namespace LunchManagement.Services
             }
 
             return ImageWriter.GetImageFormat(fileBytes) != ImageWriter.ImageFormat.unknown;
+        }
+
+        public async Task<IEnumerable<Menu>> GetMenuByCurrentWeek()
+        {
+            var result = await this.GetAll();
+
+            return result.OrderByDescending(x => x.CreatedDate).Take(2);
+        }
+
+        private DateTime GetFirstDayOfWeek(DateTime dateTime)
+        {
+            var result = dateTime;
+            while (result.DayOfWeek != DayOfWeek.Monday)
+            {
+                result.AddDays(-1);
+            }
+
+            return result;
         }
     }
 }
