@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LunchManagement.BlobStorage;
 using LunchManagement.Models;
 using LunchManagement.Repository;
 using LunchManagement.Services;
@@ -47,6 +48,7 @@ namespace LunchManagement
             services.AddScoped<IMealService, MealService>();
             services.AddScoped<IMenuRepository, MenuRepository>();
             services.AddScoped<IMenuService, MenuService>();
+            services.AddScoped<IBlobStorageService, BlobStorageService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

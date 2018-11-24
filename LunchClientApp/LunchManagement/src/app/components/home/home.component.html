@@ -6,11 +6,10 @@
   <thead>
     <tr>
       <th></th>
+      <th></th>
+    </tr>
+    <tr *ngFor="let menu of menus">
+      <td><img class="menu-image" src = "{{ menu.menuImage}}"></td>
     </tr>
   </thead>
-  <tbody>
-    <tr *ngFor="let menu of menus">
-      <td><img src = "~/{{ menu.menuImage}}"></td>
-    </tr>
-  </tbody>
 </table>

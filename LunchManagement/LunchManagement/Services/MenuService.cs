@@ -1,8 +1,10 @@
-﻿using LunchManagement.Helper;
+﻿using LunchManagement.BlobStorage;
+using LunchManagement.Helper;
 using LunchManagement.Models;
 using LunchManagement.Repository;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.WindowsAzure.Storage.Blob;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,20 +17,20 @@ namespace LunchManagement.Services
     public class MenuService : GenericService <Menu>, IMenuService
     {
         private readonly IMenuRepository menuRepository;
+        private readonly IBlobStorageService blobStorageService;
         private IHostingEnvironment _hostingEnvironment;
-        public MenuService(IMenuRepository menuRepository, IHostingEnvironment hosting) : base(menuRepository)
+        public MenuService(IMenuRepository menuRepository, IHostingEnvironment hosting, IBlobStorageService blobStorageService) : base(menuRepository)
         {
             this.menuRepository = menuRepository;
             this._hostingEnvironment = hosting;
+            this.blobStorageService = blobStorageService;
         }
 
         public async Task<string> UploadImage(IFormFile file)
         {
             if (this.CheckIfImageFile(file))
             {
-                var result = ProcessUploadImage(file);
-
-                var relativeUri = new Uri(result);
+                var result = await ProcessUploadImage(file);
 
                 if (string.IsNullOrEmpty(result))
                 {
@@ -36,7 +38,7 @@ namespace LunchManagement.Services
                 }
                 var menu = new Menu
                 {
-                    MenuImage = relativeUri.AbsolutePath
+                    MenuImage = result
                 };
                 await this.Add(menu);
                 return "upload successfully";
@@ -45,28 +47,33 @@ namespace LunchManagement.Services
             return "Invalid image file";
         }
 
-        private string ProcessUploadImage(IFormFile file)
+        private async Task<string> UploadAsync(Stream stream, string blobName)
+        {
+            //Blob
+            CloudBlockBlob blockBlob = await this.blobStorageService.GetCloudBlockBlobAsync(blobName);
+
+            //Upload
+            stream.Position = 0;
+            await blockBlob.UploadFromStreamAsync(stream);
+
+            return blockBlob.Uri.AbsoluteUri;
+        }
+
+        private async Task<string> ProcessUploadImage(IFormFile file)
         {
             try
             {
-                string folderName = "images";
-                string webRootPath = Directory.GetCurrentDirectory();
-                string newPath = Path.Combine(webRootPath, folderName);
-                if (!Directory.Exists(newPath))
-                {
-                    Directory.CreateDirectory(newPath);
-                }
                 if (file.Length > 0)
                 {
                     string fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-                    string fullPath = Path.Combine(newPath, fileName);
-                    using (var stream = new FileStream(fullPath, FileMode.Create))
+                    using (var stream = file.OpenReadStream())
                     {
-                        file.CopyTo(stream);
+                        var uploadedFileUri = await this.UploadAsync(stream, fileName);
+
+                        return uploadedFileUri;
                     }
-                    return fullPath;
                 }
-                return newPath;
+                return null;
             }
             catch (System.Exception ex)
             {

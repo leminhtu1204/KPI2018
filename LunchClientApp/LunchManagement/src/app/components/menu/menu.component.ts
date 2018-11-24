@@ -1,12 +1,11 @@
 import { Component, Inject, ViewChild } from '@angular/core';
 import { HttpClient, HttpRequest, HttpEventType, HttpResponse } from '@angular/common/http'
+import { environment } from 'src/environments/environment';
 @Component({
   selector: 'app-menu',
   templateUrl: './menu.component.html',
 })
 export class MenuComponent {
-  private base = 'http://comchui.azurewebsites.net/api/';
-
   public progress: number;
   public message: string;
   @ViewChild("file") fileInput;
@@ -24,7 +23,7 @@ export class MenuComponent {
       let formData = new FormData();
       formData.append("file", fileToUpload);
 
-      const uploadReq = new HttpRequest('POST', this.base + "menus/uploading", formData, {
+      const uploadReq = new HttpRequest('POST', environment.apiEndPoint + "menus/uploading", formData, {
         reportProgress: true,
       });
       
