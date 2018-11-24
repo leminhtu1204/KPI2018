@@ -5,17 +5,12 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
   templateUrl: './home.component.html',
 })
 export class HomeComponent {
-  public meals :Meal[];
-  private base = 'https://localhost:44334/';
+  public menus :any[];
+  private base = 'http://comchui.azurewebsites.net/api/';
   
   constructor(http: HttpClient) {
-    http.get<Meal[]>(this.base + 'api/meals').subscribe(result => {
-      this.meals = result;
+    http.get<any[]>(this.base + 'menus').subscribe(result => {
+      this.menus = result;
     });
   }
-}
-
-interface Meal  {
-  MealName: string;
-  Price: number;
 }
