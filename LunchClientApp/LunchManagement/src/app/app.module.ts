@@ -9,6 +9,8 @@ import { HomeComponent } from './components/home/home.component';
 import { NavMenuComponent } from './components/nav-menu/nav-menu.component';
 import { OrderComponent } from './components/order/order.component';
 import { MenuComponent } from './components/menu/menu.component';
+import { RegistrationComponent } from './components/account/registration.component/registration.component';
+// import { LoginComponent } from './components/account/login.component/login.component.component';
 
 @NgModule({
   declarations: [
@@ -16,13 +18,16 @@ import { MenuComponent } from './components/menu/menu.component';
     NavMenuComponent,
     HomeComponent,
     OrderComponent,
-    MenuComponent
+    MenuComponent,
+    RegistrationComponent,
+    // LoginComponent,
+    
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    FormsModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,5 +1,5 @@
-import { Component, Inject, ViewChild } from '@angular/core';
-import { HttpClient, HttpRequest, HttpEventType, HttpResponse } from '@angular/common/http'
+import { Component, ViewChild } from '@angular/core';
+import { HttpClient, HttpRequest, HttpEventType } from '@angular/common/http'
 import { environment } from 'src/environments/environment';
 @Component({
   selector: 'app-menu',

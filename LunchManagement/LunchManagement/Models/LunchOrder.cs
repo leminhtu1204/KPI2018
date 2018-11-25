@@ -9,7 +9,7 @@ namespace LunchManagement.Models
     {
         public List<Meal> Meals { get; set; }
 
-        public User User { get; set; }
+        public Customer Customer { get; set; }
 
         public bool IsPayed { get; set; }
 

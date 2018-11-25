@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace LunchManagement.Models
 {
-    public class User : IdentityUser
+    public class Customer : BaseClass
     {
+        public string IdentityId { get; set; }
+        public AppUser Identity { get; set; }  // navigation property
     }
 }

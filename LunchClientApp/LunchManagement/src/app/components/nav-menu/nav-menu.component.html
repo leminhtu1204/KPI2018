@@ -27,6 +27,11 @@
                         <span class='glyphicon glyphicon-th-list'></span> Upload Menu
                     </a>
                 </li>
+                <li [routerLinkActive]='["link-active"]'>
+                    <a [routerLink]='["/register"]' (click)='collapse()'>
+                        <span class='glyphicon glyphicon-th-list'></span> Register User
+                    </a>
+                </li>
             </ul>
         </div>
     </div>
