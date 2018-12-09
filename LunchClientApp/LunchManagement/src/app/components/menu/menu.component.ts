@@ -8,7 +8,7 @@ import { environment } from 'src/environments/environment';
 export class MenuComponent {
   public progress: number;
   public message: string;
-  @ViewChild("file") fileInput;
+  @ViewChild('file') fileInput;
   
   constructor(private http: HttpClient) {
    

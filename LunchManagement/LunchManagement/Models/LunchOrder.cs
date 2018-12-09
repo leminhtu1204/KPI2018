@@ -14,5 +14,7 @@ namespace LunchManagement.Models
         public bool IsPayed { get; set; }
 
         public int Total { get; set; }
+
+        public int CustomerId { get; set; }
     }
 }

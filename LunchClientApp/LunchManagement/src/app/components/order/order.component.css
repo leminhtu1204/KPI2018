@@ -1,0 +1,26 @@
+.order-form {
+    min-width: 150px;
+    max-width: 500px;
+    width: 100%;
+  }
+  
+  .input-full-width {
+    width: 100%;
+  }
+
+  .submit-button{
+    background-color:#f44336;
+    color: white
+  }
+  .add-submeal-button{
+    background-color:#3c763d;
+    color: white
+  }
+
+  .main-dish-price{
+    max-width: 87%;
+  }
+
+  .submit-form{
+    display: grid;
+  }

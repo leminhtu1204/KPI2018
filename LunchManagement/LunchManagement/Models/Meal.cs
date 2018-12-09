@@ -10,5 +10,7 @@ namespace LunchManagement.Models
         public string MealName { get; set; }
 
         public int Price { get; set; }
+
+        public bool IsPrimary { get; set; }
     }
 }
