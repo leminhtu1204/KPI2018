@@ -1,1 +1,25 @@
-Order
+<div class="order-form">
+    <div *ngFor="let item of submeals">
+        <div *ngIf="item.isPrimary">
+            <label>Main Dish</label>
+            <mat-form-field class="input-full-width">
+                <input matInput class="main-dish-price" id="main-dish" placeholder="24000 vnd" [(ngModel)]="item.mealName">
+                <button (click)="addSubMeal()" class="add-submeal-button" mat-button> + </button>
+            </mat-form-field>
+        </div>
+        <div *ngIf="!item.isPrimary">
+            <label>Sub Dish</label>
+            <mat-form-field class="input-full-width">
+                    <input id="sub-dish" matInput class="main-dish-price" placeholder="{{item.price}} vnd" [(ngModel)]="item.mealName">
+                    <button (click)="removeSubMeal(item)" class="add-submeal-button" mat-button> - </button>
+            </mat-form-field>
+        </div>
+    </div>
+    <mat-form-field class="input-full-width">
+      <textarea matInput placeholder="Leave a comment"></textarea>
+    </mat-form-field>
+    <div class="submit-form">
+        <span>Total: {{total}}</span>
+        <span><button (click)="submitOrder()" class="submit-button" mat-button>Submit</button></span>
+    </div>
+</div>
