@@ -27,8 +27,9 @@ export class RegistrationComponent implements OnInit {
     {
         this.userService.register(value.email,value.password,value.firstName,value.lastName,value.userName)
                   .subscribe(
-                    result  => {if(result){
-                        this.router.navigate(['/']);                         
+                    result  => {
+                    if(result){
+                      this.router.navigate(['/login'],{queryParams: {brandNew: true, userName:value.userName}});                           
                     }},
                     errors =>  this.errors = errors);
     }

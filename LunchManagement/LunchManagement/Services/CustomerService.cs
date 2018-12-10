@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -84,11 +85,13 @@ namespace LunchManagement.Services
                         expires: DateTime.UtcNow.AddMinutes(60),
                         signingCredentials: signingCredentials
                         );
-                    return new OkObjectResult(new
+                    var response =  new
                     {
                         token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
                         expiration = jwtSecurityToken.ValidTo
-                    });
+                    };
+
+                    return new OkObjectResult(response);
                 }
                 return new UnauthorizedResult();
             }

@@ -11,6 +11,12 @@
         </div>
         <div class='clearfix'></div>
         <div class='navbar-collapse collapse' [ngClass]='{ "in": isExpanded }'>
+            <ul class="nav navbar-nav">
+                <li>
+                    <a>Tu Le Minh</a>
+                </li>
+            </ul>
+             <div class='clearfix'></div>
             <ul class='nav navbar-nav'>
                 <li [routerLinkActive]='["link-active"]' [routerLinkActiveOptions]='{ exact: true }'>
                     <a [routerLink]='["/"]' (click)='collapse()'>
@@ -19,17 +25,22 @@
                 </li>
                 <li [routerLinkActive]='["link-active"]'>
                     <a [routerLink]='["/order"]' (click)='collapse()'>
-                        <span class='glyphicon glyphicon-education'></span> My Order
+                        <span class='glyphicon glyphicon-list-alt'></span> My Order
                     </a>
                 </li>
                 <li [routerLinkActive]='["link-active"]'>
                     <a [routerLink]='["/menu"]' (click)='collapse()'>
-                        <span class='glyphicon glyphicon-th-list'></span> Upload Menu
+                        <span class='glyphicon glyphicon-upload'></span> Upload Menu
                     </a>
                 </li>
                 <li [routerLinkActive]='["link-active"]'>
                     <a [routerLink]='["/register"]' (click)='collapse()'>
-                        <span class='glyphicon glyphicon-th-list'></span> Register User
+                        <span class='glyphicon glyphicon-user'></span> Register User
+                    </a>
+                </li>
+                <li [routerLinkActive]='["link-active"]'>
+                    <a (click)='collapse()'>
+                        <span class='glyphicon glyphicon glyphicon-thumbs-down'></span> Logout
                     </a>
                 </li>
             </ul>

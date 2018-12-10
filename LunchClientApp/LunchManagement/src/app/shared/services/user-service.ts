@@ -1,22 +1,23 @@
 import { BaseService } from "./base-service";
 import { environment } from "src/environments/environment.prod";
 import { BehaviorSubject, Observable } from "rxjs/Rx";
-import { HttpClient, HttpRequest, HttpEventType, HttpResponse } from '@angular/common/http'
+import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { UserRegistration } from "../models/user-registration";
 import { Injectable } from "@angular/core";
+import { Credentials } from "../models/credentials";
 
 @Injectable()
 export class UserService extends BaseService {
 
     private baseUrl: string = environment.apiEndPoint
 
-    private authNavStatusSource = new BehaviorSubject<boolean>(false);
+    public authNavStatusSource = new BehaviorSubject<boolean>(false);
 
-    private authNavStatus = this.authNavStatusSource.asObservable();
+    public authNavStatus = this.authNavStatusSource.asObservable();
 
     private loggedIn = false;
 
-    constructor(private http: HttpClient){
+    constructor(private http: Http){
         super();
 
         this.loggedIn = !!localStorage.getItem('auth_token');
@@ -24,9 +25,7 @@ export class UserService extends BaseService {
         this.authNavStatusSource.next(this.loggedIn);
     }
 
-    public register(email: string, password: string, firstName: string, lastName: string, userName: string): Observable<UserRegistration> {
-        let body = JSON.stringify({ email, password, firstName, lastName,location });
-        let headers = new Headers({ 'Content-Type': 'application/json' });
+    public register(email: string, password: string, firstName: string, lastName: string,userName: string): Observable<boolean> {
         let registerData: UserRegistration = {
             email: email,
             password: password,
@@ -34,36 +33,36 @@ export class UserService extends BaseService {
             lastName: lastName,
             userName: userName
         };
-        return this.http.post<UserRegistration>(this.baseUrl + 'accounts/register', registerData)
-    }
-
-    // private login(userName, password) {
-    //     let headers = new Headers();
-    //     headers.append('Content-Type', 'application/json');
+        let headers = new Headers({ 'Content-Type': 'application/json' });
+        let options = new RequestOptions({ headers: headers });
     
-    //     return this.http
-    //       .post(
-    //       this.baseUrl + '/auth/login',
-    //       JSON.stringify({ userName, password }),{ headers }
-    //       )
-    //       .map(res => res.json())
-    //       .map(res => {
-    //         localStorage.setItem('auth_token', res.auth_token);
-    //         this.loggedIn = true;
-    //         this.authNavStatusSource.next(true);
-    //         return true;
-    //       })
-    //       .catch(this.handleError);
-    //   }
+        return this.http.post(this.baseUrl + "/accounts/register", registerData, options)
+          .map(res => true)
+          .catch(this.handleError);
+      }  
 
+    public login(credentials: Credentials) {
+        let headers = new Headers();
+        headers.append('Content-Type', 'application/json');
+    
+        return this.http
+          .post(this.baseUrl + 'accounts/login', credentials)
+          .map(res => res.json())
+          .map(res => {
+            localStorage.setItem('auth_token', res.value.token);
+            this.loggedIn = true;
+            this.authNavStatusSource.next(true);
+            return true;
+          })
+          .catch(this.handleError);
+      }
       public logout() {
         localStorage.removeItem('auth_token');
         this.loggedIn = false;
         this.authNavStatusSource.next(false);
       }
-
+    
       public isLoggedIn() {
         return this.loggedIn;
       }
-
 }

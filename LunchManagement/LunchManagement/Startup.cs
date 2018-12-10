@@ -19,6 +19,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using LunchManagement.Helper;
 
 namespace LunchManagement
 {
@@ -64,6 +65,11 @@ namespace LunchManagement
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials());
+            });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("ApiUser", policy => policy.RequireClaim(JwtClaimConstant.Strings.JwtClaimIdentifiers.Rol, JwtClaimConstant.Strings.JwtClaims.ApiAccess));
             });
 
             var config = new MapperConfiguration(cfg =>

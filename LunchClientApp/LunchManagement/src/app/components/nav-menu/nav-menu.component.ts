@@ -7,7 +7,7 @@ import { Component } from '@angular/core';
 })
 export class NavMenuComponent {
   isExpanded = false;
-
+  authService = true;
   collapse() {
     this.isExpanded = false;
   }
